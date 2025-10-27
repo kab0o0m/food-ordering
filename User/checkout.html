@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodHub - Checkout</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
@@ -13,9 +15,8 @@
         <ul class="nav-links">
             <li><a href="index.html">HOME</a></li>
             <li><a href="menu.html">MENU</a></li>
-            <li><a href="#promotions">PROMOTIONS</a></li>
-            <li><a href="#locations">LOCATE US</a></li>
-            <li><a href="#join">JOIN US</a></li>
+            <li><a href="cart.html">MY ORDER</a></li>
+            <li><a href="checkout.html">CHECKOUT</a></li>
         </ul>
         <button class="account-btn">MY ACCOUNT</button>
     </nav>
@@ -44,57 +45,33 @@
             <!-- Checkout Form -->
             <div class="checkout-form-section">
                 <h2 class="checkout-title">Delivery Information</h2>
-                
+
                 <form id="checkoutForm" class="checkout-form">
                     <!-- Name Field -->
                     <div class="form-group">
                         <label for="fullName">Full Name <span class="required">*</span></label>
-                        <input 
-                            type="text" 
-                            id="fullName" 
-                            name="fullName" 
-                            placeholder="Enter your full name"
-                            required
-                        >
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
                         <span class="error-message" id="nameError"></span>
                     </div>
 
                     <!-- Phone Number Field -->
                     <div class="form-group">
                         <label for="phoneNumber">Phone Number <span class="required">*</span></label>
-                        <input 
-                            type="tel" 
-                            id="phoneNumber" 
-                            name="phoneNumber" 
-                            placeholder="+65 1234 5678"
-                            required
-                        >
+                        <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+65 1234 5678" required>
                         <span class="error-message" id="phoneError"></span>
                     </div>
 
                     <!-- Email Field -->
                     <div class="form-group">
                         <label for="email">Email Address <span class="required">*</span></label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            placeholder="example@email.com"
-                            required
-                        >
+                        <input type="email" id="email" name="email" placeholder="example@email.com" required>
                         <span class="error-message" id="emailError"></span>
                     </div>
 
                     <!-- Address Field -->
                     <div class="form-group">
                         <label for="address">Delivery Address <span class="required">*</span></label>
-                        <input 
-                            type="text" 
-                            id="address" 
-                            name="address" 
-                            placeholder="Street address"
-                            required
-                        >
+                        <input type="text" id="address" name="address" placeholder="Street address" required>
                         <span class="error-message" id="addressError"></span>
                     </div>
 
@@ -102,23 +79,12 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="unitNumber">Unit Number</label>
-                            <input 
-                                type="text" 
-                                id="unitNumber" 
-                                name="unitNumber" 
-                                placeholder="#01-23"
-                            >
+                            <input type="text" id="unitNumber" name="unitNumber" placeholder="#01-23">
                         </div>
 
                         <div class="form-group">
                             <label for="postalCode">Postal Code <span class="required">*</span></label>
-                            <input 
-                                type="text" 
-                                id="postalCode" 
-                                name="postalCode" 
-                                placeholder="123456"
-                                required
-                            >
+                            <input type="text" id="postalCode" name="postalCode" placeholder="123456" required>
                             <span class="error-message" id="postalError"></span>
                         </div>
                     </div>
@@ -126,12 +92,8 @@
                     <!-- Delivery Instructions -->
                     <div class="form-group">
                         <label for="instructions">Delivery Instructions (Optional)</label>
-                        <textarea 
-                            id="instructions" 
-                            name="instructions" 
-                            rows="3"
-                            placeholder="Add any special instructions for delivery..."
-                        ></textarea>
+                        <textarea id="instructions" name="instructions" rows="3"
+                            placeholder="Add any special instructions for delivery..."></textarea>
                     </div>
 
                     <!-- Payment Method -->
@@ -186,7 +148,7 @@
             <!-- Order Summary Sidebar -->
             <div class="order-summary-sidebar">
                 <h3>Order Summary</h3>
-                
+
                 <div class="summary-items">
                     <div class="summary-item">
                         <span>2 Large Cheese Volcano Pizza</span>
@@ -239,4 +201,5 @@
 
     <script src="checkout.js"></script>
 </body>
+
 </html>

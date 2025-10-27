@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodHub - Order Food Online</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="logo">FoodHub</div>
         <ul class="nav-links">
-            <li><a href="#menu">MENU</a></li>
-            <li><a href="#promotions">PROMOTIONS</a></li>
-            <li><a href="#locations">LOCATE US</a></li>
-            <li><a href="#join">JOIN US</a></li>
+            <li><a href="index.html">HOME</a></li>
+            <li><a href="menu.html">MENU</a></li>
+            <li><a href="cart.html">MY ORDER</a></li>
+            <li><a href="checkout.html">CHECKOUT</a></li>
         </ul>
         <div class="nav-right">
             <button class="account-btn">MY ACCOUNT</button>
@@ -80,7 +82,8 @@
                 <div class="deal-info">
                     <span class="deal-badge">2 PIZZAS + 2 SIDES</span>
                     <div class="deal-price">$36.95</div>
-                    <p class="deal-description">Get 2 Pizzas + 2 Sides - Treat yourself to your favorite pizzas and delicious sides at great value!</p>
+                    <p class="deal-description">Get 2 Pizzas + 2 Sides - Treat yourself to your favorite pizzas and
+                        delicious sides at great value!</p>
                     <button class="deal-btn">ORDER NOW →</button>
                 </div>
             </div>
@@ -90,18 +93,20 @@
                 <div class="deal-info">
                     <span class="deal-badge">NEW DOMINO'S 3 W/BOX</span>
                     <div class="deal-price">$25</div>
-                    <p class="deal-description">For just $5 SD, hit the rewatch of your meal. Give it away with 2 TWO SIDES or your choice for just $5 each, snack, munch, Get 2 snacks for $10 and 3 mains for $25!</p>
+                    <p class="deal-description">For just $5 SD, hit the rewatch of your meal. Give it away with 2 TWO
+                        SIDES or your choice for just $5 each, snack, munch, Get 2 snacks for $10 and 3 mains for $25!
+                    </p>
                     <button class="deal-btn">ORDER NOW →</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <script>
+    <!-- <script>
         function selectService(service) {
             const deliveryBtn = document.querySelector('.toggle-btn.delivery');
             const pickupBtn = document.querySelector('.toggle-btn.pickup');
-            
+
             if (service === 'delivery') {
                 alert('Delivery service selected! Enter your address to start ordering.');
             } else {
@@ -111,12 +116,32 @@
 
         // Add click handlers for order buttons
         document.querySelectorAll('.order-btn, .deal-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
+            btn.addEventListener('click', function (e) {
                 if (!e.target.closest('.hero-large') && !e.target.closest('.promo-card')) {
                     alert('Redirecting to menu page...');
                 }
             });
         });
-    </script>
+    </script> -->
+    <script src="index.js"></script>
 </body>
+
 </html>
+
+<?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// ---- Database connection ----
+$host = "127.0.0.1";
+$port = 3307;           // port from SSH tunnel
+$username = "kab0o0m";  
+$password = "phantoka123";  // MySQL password
+$database = "kab0o0m\$ie4727";
+
+$conn = mysqli_connect($host, $username, $password, $database, $port);
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+?>
