@@ -30,6 +30,14 @@ if ($result && mysqli_num_rows($result) > 0) {
     }
 }
 
+// ---- REORDER CATEGORIES ----
+// Force Best Sellers to appear first
+if (isset($categories['Best Sellers'])) {
+    $best = ['Best Sellers' => $categories['Best Sellers']];
+    unset($categories['Best Sellers']);
+    $categories = $best + $categories; // "Best Sellers" first, others follow
+}
+
 mysqli_close($conn);
 
 // helper to make nice section titles if you want to tweak wording
@@ -156,7 +164,7 @@ function renderSectionTitle($cat) {
         }
         btn.textContent = username;
         btn.onclick = () => {
-          alert('You are logged in as ' + username);
+           window.location.href = '../account/account.html'
         };
       } else {
         btn.textContent = 'LOGIN';

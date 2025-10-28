@@ -51,7 +51,7 @@ function loginUser(email, password) {
 
         // redirect to site homepage after login
         // login.html is in /User/login/, index.html is in /User/
-        window.location.href = "../homepage/menu.html";
+        window.location.href = "../homepage/menu.php";
       } else {
         // backend said no
         showError("passwordError", data.message || "Invalid email or password", "password");

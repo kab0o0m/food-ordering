@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account - FoodHub</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .account-wrapper {
+        max-width: 400px;
+        margin: 40px auto;
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px 28px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+      }
+
+      .account-header h1 {
+        font-size: 1.4rem;
+        margin: 0 0 4px;
+        font-weight: 600;
+      }
+
+      .account-header p {
+        margin: 0 0 20px;
+        font-size: 0.9rem;
+        color: #666;
+      }
+
+      .account-section {
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-bottom: 20px;
+      }
+
+      .account-field-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        margin-bottom: 2px;
+      }
+
+      .account-field-value {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #222;
+        word-break: break-word;
+        margin-bottom: 12px;
+      }
+
+      .account-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .account-btn-primary,
+      .account-btn-secondary,
+      .account-btn-danger {
+        width: 100%;
+        border-radius: 8px;
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border: 0;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: center;
+      }
+
+      .account-btn-primary {
+        background: #ff4d2e;
+        color: #fff;
+      }
+      .account-btn-primary:hover {
+        opacity: 0.9;
+      }
+
+      .account-btn-secondary {
+        background: #222;
+        color: #fff;
+      }
+      .account-btn-secondary:hover {
+        opacity: 0.9;
+      }
+
+      .account-btn-danger {
+        background: #fff;
+        color: #d00;
+        border: 1px solid #d00;
+      }
+      .account-btn-danger:hover {
+        background: #d00;
+        color: #fff;
+      }
+
+      .logout-note {
+        text-align: center;
+        font-size: 0.8rem;
+        color: #888;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar placeholder (loaded dynamically) -->
+    <div id="navbar-placeholder"></div>
+
+    <div class="account-wrapper">
+      <div class="account-header">
+        <h1 id="accountGreeting">My Account</h1>
+        <p>Manage your profile and orders</p>
+      </div>
+
+      <!-- User details -->
+      <div class="account-section">
+        <div class="account-field">
+          <div class="account-field-label">Name</div>
+          <div class="account-field-value" id="accountName">-</div>
+        </div>
+
+        <div class="account-field">
+          <div class="account-field-label">Email</div>
+          <div class="account-field-value" id="accountEmail">-</div>
+        </div>
+
+        <div class="account-field">
+          <div class="account-field-label">Phone</div>
+          <div class="account-field-value" id="accountPhone">-</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="account-actions">
+        <button class="account-btn-primary" id="editProfileBtn">Edit Profile</button>
+        <button class="account-btn-secondary" id="viewCartBtn">View My Cart</button>
+        <button class="account-btn-danger" id="logoutBtn">Log Out</button>
+        <div class="logout-note">You will be signed out of this browser</div>
+      </div>
+    </div>
+
+    <script>
+      // 2. Check login state
+      const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+      if (!isLoggedIn) {
+        // not logged in? kick them to login
+        window.location.href = "../login/login.html";
+      }
+
+      // 3. Load user data
+      let userData = {};
+      try {
+        userData = JSON.parse(localStorage.getItem("user") || "{}");
+      } catch (e) {
+        console.error("Bad user data in localStorage");
+      }
+
+      // 4. Populate UI
+      const nameEl = document.getElementById("accountName");
+      const emailEl = document.getElementById("accountEmail");
+      const phoneEl = document.getElementById("accountPhone");
+      const greetEl = document.getElementById("accountGreeting");
+
+      const displayName = userData.name || "Customer";
+
+      nameEl.textContent = userData.name || "-";
+      emailEl.textContent = userData.email || "-";
+      phoneEl.textContent = userData.phone || "-";
+      greetEl.textContent = "Hi, " + displayName;
+
+      // 5. Button actions
+      document.getElementById("editProfileBtn").addEventListener("click", () => {
+        window.location.href = "../editprofile/editprofile.html";
+      });
+
+      document.getElementById("viewCartBtn").addEventListener("click", () => {
+        window.location.href = "../cart.html";
+      });
+
+      document.getElementById("logoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("user");
+        window.location.href = "../login/login.html";
+      });
+    </script>
+  </body>
+</html>
