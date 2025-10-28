@@ -15,7 +15,7 @@
         <li><a href="../homepage/menu.php">HOME</a></li>
         <li><a href="cart.html">MY ORDER</a></li>
       </ul>
-      <button class="account-btn">MY ACCOUNT</button>
+      <button class="account-btn" id="accountBtn">MY ACCOUNT</button>
     </nav>
 
     <!-- Cart Content -->
@@ -40,106 +40,41 @@
             <button class="collapse-btn">∨</button>
           </div>
 
-          <!-- Voucher Deal -->
-          <div class="deal-card">
+          <!-- (Optional promo bundle UI - you can keep/remove) -->
+          <div class="deal-card" id="deal-card" style="display: none">
             <div class="deal-info">
-              <div class="deal-title">Voucher</div>
-              <div class="deal-price">$58.80</div>
+              <div class="deal-title" id="deal-title">Voucher</div>
+              <div class="deal-price" id="deal-price">$0.00</div>
             </div>
-            <div class="deal-description">
-              From $58.80: 2 Large Cheese Volcano Pizzas + 2 Mushroom Soups + 2 Garlic Bread + 2
-              Bottles Drink
-            </div>
-            <button class="remove-deal-btn">🗑️ Remove Deal</button>
+            <div class="deal-description" id="deal-desc">Deal description here</div>
+            <button class="remove-deal-btn" id="deal-remove-btn">🗑️ Remove Deal</button>
           </div>
 
-          <!-- Add Pizza Button -->
-          <button class="add-item-btn">
-            <span class="add-icon">+</span>
-            <span>Add a Pizza</span>
-          </button>
-
-          <!-- Cart Items -->
-          <div class="cart-items">
-            <div class="cart-item">
-              <div class="item-quantity">1 ×</div>
-              <div class="item-details">
-                <div class="item-name">Mushroom Soup</div>
-                <div class="item-actions">
-                  <button class="action-btn remove">Remove</button>
-                  <button class="action-btn edit">Edit</button>
-                  <button class="action-btn swap">Swap</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="cart-item">
-              <div class="item-quantity">1 ×</div>
-              <div class="item-details">
-                <div class="item-name">Mushroom Soup</div>
-                <div class="item-actions">
-                  <button class="action-btn remove">Remove</button>
-                  <button class="action-btn edit">Edit</button>
-                  <button class="action-btn swap">Swap</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="cart-item">
-              <div class="item-quantity">1 ×</div>
-              <div class="item-details">
-                <div class="item-name">Garlic Bread</div>
-                <div class="item-actions">
-                  <button class="action-btn remove">Remove</button>
-                  <button class="action-btn edit">Edit</button>
-                  <button class="action-btn swap">Swap</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="cart-item">
-              <div class="item-quantity">1 ×</div>
-              <div class="item-details">
-                <div class="item-name">Garlic Bread</div>
-                <div class="item-actions">
-                  <button class="action-btn remove">Remove</button>
-                  <button class="action-btn edit">Edit</button>
-                  <button class="action-btn swap">Swap</button>
-                </div>
-              </div>
-            </div>
+          <!-- Cart Items (dynamic) -->
+          <div class="cart-items" id="cart-items">
+            <!-- JS will inject items here -->
           </div>
-
-          <!-- Add Drink Button -->
-          <button class="add-item-btn">
-            <span class="add-icon">+</span>
-            <span>Add a Drink</span>
-          </button>
         </div>
 
         <!-- Price Summary -->
         <div class="price-summary">
           <div class="price-row">
             <span class="price-label">Original Price</span>
-            <span class="price-value strikethrough">$67.70</span>
+            <span class="price-value" id="original-price">$0.00</span>
           </div>
           <div class="price-row">
             <span class="price-label">Voucher Discounts</span>
-            <span class="price-value discount">-$8.90</span>
-          </div>
-          <div class="price-row">
-            <span class="price-label">Delivery Service Fee</span>
-            <span class="price-value">+$5.00</span>
+            <span class="price-value discount" id="discount-amount">$0.00</span>
           </div>
           <div class="price-row total">
             <span class="price-label">Order Total</span>
-            <span class="price-value">$63.80</span>
+            <span class="price-value" id="order-total">$0.00</span>
           </div>
         </div>
 
         <!-- Checkout Button -->
-        <button class="checkout-btn">
-          <span class="checkout-items">4 items | $63.80</span>
+        <button class="checkout-btn" id="checkout-btn">
+          <span class="checkout-items" id="checkout-items-text">0 items | $0.00</span>
           <span class="checkout-text">Finish Order</span>
         </button>
       </div>

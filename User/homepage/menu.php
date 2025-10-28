@@ -71,6 +71,78 @@ function renderSectionTitle($cat) {
     <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
+    <style>
+      /* --- Add-to-cart Toast --- */
+      .cart-toast {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        min-width: 260px;
+        max-width: 320px;
+        background: #1a1a1a;
+        color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        padding: 16px 18px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px) scale(0.98);
+        transition: all 0.25s ease;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", Roboto, sans-serif;
+        z-index: 9999;
+      }
+
+      .cart-toast.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+      }
+
+      .cart-toast-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .cart-toast-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.3;
+        font-size: 14px;
+      }
+
+      .cart-toast-text strong {
+        font-size: 15px;
+        font-weight: 600;
+        color: #fff;
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .cart-toast-text span {
+        font-size: 13px;
+        color: #aaa;
+      }
+
+      .cart-toast-view {
+        margin-left: auto;
+        background: #ffcc00;
+        color: #000;
+        border: 0;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 10px;
+        cursor: pointer;
+        line-height: 1.2;
+        white-space: nowrap;
+      }
+
+      .cart-toast-view:hover {
+        filter: brightness(0.9);
+      }
+
+    </style>
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -135,7 +207,7 @@ function renderSectionTitle($cat) {
                     data-product-name="<?php echo htmlspecialchars($p['name']); ?>"
                     data-product-price="<?php echo htmlspecialchars($p['price']); ?>"
                   >
-                    ORDER NOW
+                    Add to Cart
                   </button>
                 </div>
               </div>
@@ -144,6 +216,17 @@ function renderSectionTitle($cat) {
         </div>
       <?php endforeach; ?>
 
+    </div>
+
+        <!-- Toast Notification -->
+    <div id="cart-toast" class="cart-toast">
+      <div class="cart-toast-content">
+        <div class="cart-toast-text">
+          <strong id="cart-toast-name">Item added!</strong>
+          <span>Added to cart</span>
+        </div>
+        <button id="cart-toast-view" class="cart-toast-view">View cart</button>
+      </div>
     </div>
 
     <script>
@@ -176,6 +259,7 @@ function renderSectionTitle($cat) {
     })();
 
     // --- Add to cart ---
+    // --- Add to cart ---
     document.querySelectorAll('.order-now-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-product-id');
@@ -204,9 +288,46 @@ function renderSectionTitle($cat) {
         }
 
         localStorage.setItem('cart', JSON.stringify(cart));
-        alert(name + ' added to cart!');
+        console.log(localStorage);
+
+        // NEW: nice toast
+        showToast(name);
       });
     });
+
+    // --- Toast behavior ---
+    let toastTimeout = null;
+
+    function showToast(productName) {
+      const toast = document.getElementById('cart-toast');
+      const toastName = document.getElementById('cart-toast-name');
+      const toastViewBtn = document.getElementById('cart-toast-view');
+
+      // update text
+      toastName.textContent = productName + " added to cart";
+
+      // show
+      toast.classList.add('show');
+
+      // clicking "View cart" takes user to cart
+      toastViewBtn.onclick = () => {
+        window.location.href = '../cart/cart.html';
+      };
+
+      // auto-hide after 3 seconds
+      if (toastTimeout) {
+        clearTimeout(toastTimeout);
+      }
+      toastTimeout = setTimeout(() => {
+        hideToast();
+      }, 3000);
+    }
+
+    function hideToast() {
+      const toast = document.getElementById('cart-toast');
+      toast.classList.remove('show');
+    }
+
     </script>
 
 </body>
