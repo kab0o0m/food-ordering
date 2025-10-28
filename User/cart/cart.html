@@ -1,164 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodHub - Your Cart</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
 
-<body>
+  <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="logo">FoodHub</div>
-        <ul class="nav-links">
-            <li><a href="index.html">HOME</a></li>
-            <li><a href="menu.html">MENU</a></li>
-            <li><a href="cart.html">MY ORDER</a></li>
-            <li><a href="checkout.html">CHECKOUT</a></li>
-        </ul>
-        <button class="account-btn">MY ACCOUNT</button>
+      <div class="logo">FoodHub</div>
+      <ul class="nav-links">
+        <li><a href="../homepage/menu.php">HOME</a></li>
+        <li><a href="cart.html">MY ORDER</a></li>
+      </ul>
+      <button class="account-btn">MY ACCOUNT</button>
     </nav>
 
     <!-- Cart Content -->
     <div class="cart-container">
-        <div class="cart-main">
-            <!-- Delivery Info -->
-            <div class="delivery-info-card">
-                <div class="delivery-icon">🚚</div>
-                <div class="delivery-details">
-                    <div class="delivery-type">Delivery</div>
-                    <div class="delivery-time">11:45 am Fri 24 Oct</div>
-                    <div class="delivery-address">302 Yishun Central, Block 302 Singap...</div>
-                </div>
-                <button class="change-btn">›</button>
-            </div>
-
-            <!-- Voucher Section -->
-            <div class="voucher-section">
-                <div class="voucher-header">
-                    <h3>Add a Voucher Code</h3>
-                    <button class="collapse-btn">∨</button>
-                </div>
-                <div class="voucher-input-group">
-                    <input type="text" placeholder="Enter Voucher Code" class="voucher-input">
-                    <button class="apply-btn">Apply</button>
-                </div>
-            </div>
-
-            <!-- Order Details -->
-            <div class="order-details-section">
-                <div class="order-header">
-                    <h3>Order Details</h3>
-                    <button class="collapse-btn">∨</button>
-                </div>
-
-                <!-- Voucher Deal -->
-                <div class="deal-card">
-                    <div class="deal-info">
-                        <div class="deal-title">Voucher</div>
-                        <div class="deal-price">$58.80</div>
-                    </div>
-                    <div class="deal-description">
-                        From $58.80: 2 Large Cheese Volcano Pizzas + 2 Mushroom Soups + 2 Garlic Bread + 2 Bottles Drink
-                    </div>
-                    <button class="remove-deal-btn">🗑️ Remove Deal</button>
-                </div>
-
-                <!-- Add Pizza Button -->
-                <button class="add-item-btn">
-                    <span class="add-icon">+</span>
-                    <span>Add a Pizza</span>
-                </button>
-
-                <!-- Cart Items -->
-                <div class="cart-items">
-                    <div class="cart-item">
-                        <div class="item-quantity">1 ×</div>
-                        <div class="item-details">
-                            <div class="item-name">Mushroom Soup</div>
-                            <div class="item-actions">
-                                <button class="action-btn remove">Remove</button>
-                                <button class="action-btn edit">Edit</button>
-                                <button class="action-btn swap">Swap</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cart-item">
-                        <div class="item-quantity">1 ×</div>
-                        <div class="item-details">
-                            <div class="item-name">Mushroom Soup</div>
-                            <div class="item-actions">
-                                <button class="action-btn remove">Remove</button>
-                                <button class="action-btn edit">Edit</button>
-                                <button class="action-btn swap">Swap</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cart-item">
-                        <div class="item-quantity">1 ×</div>
-                        <div class="item-details">
-                            <div class="item-name">Garlic Bread</div>
-                            <div class="item-actions">
-                                <button class="action-btn remove">Remove</button>
-                                <button class="action-btn edit">Edit</button>
-                                <button class="action-btn swap">Swap</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="cart-item">
-                        <div class="item-quantity">1 ×</div>
-                        <div class="item-details">
-                            <div class="item-name">Garlic Bread</div>
-                            <div class="item-actions">
-                                <button class="action-btn remove">Remove</button>
-                                <button class="action-btn edit">Edit</button>
-                                <button class="action-btn swap">Swap</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Add Drink Button -->
-                <button class="add-item-btn">
-                    <span class="add-icon">+</span>
-                    <span>Add a Drink</span>
-                </button>
-            </div>
-
-            <!-- Price Summary -->
-            <div class="price-summary">
-                <div class="price-row">
-                    <span class="price-label">Original Price</span>
-                    <span class="price-value strikethrough">$67.70</span>
-                </div>
-                <div class="price-row">
-                    <span class="price-label">Voucher Discounts</span>
-                    <span class="price-value discount">-$8.90</span>
-                </div>
-                <div class="price-row">
-                    <span class="price-label">Delivery Service Fee</span>
-                    <span class="price-value">+$5.00</span>
-                </div>
-                <div class="price-row total">
-                    <span class="price-label">Order Total</span>
-                    <span class="price-value">$63.80</span>
-                </div>
-            </div>
-
-            <!-- Checkout Button -->
-            <button class="checkout-btn">
-                <span class="checkout-items">4 items | $63.80</span>
-                <span class="checkout-text">Finish Order</span>
-            </button>
+      <div class="cart-main">
+        <!-- Voucher Section -->
+        <div class="voucher-section">
+          <div class="voucher-header">
+            <h3>Add a Voucher Code</h3>
+            <button class="collapse-btn">∨</button>
+          </div>
+          <div class="voucher-input-group">
+            <input type="text" placeholder="Enter Voucher Code" class="voucher-input" />
+            <button class="apply-btn">Apply</button>
+          </div>
         </div>
+
+        <!-- Order Details -->
+        <div class="order-details-section">
+          <div class="order-header">
+            <h3>Order Details</h3>
+            <button class="collapse-btn">∨</button>
+          </div>
+
+          <!-- Voucher Deal -->
+          <div class="deal-card">
+            <div class="deal-info">
+              <div class="deal-title">Voucher</div>
+              <div class="deal-price">$58.80</div>
+            </div>
+            <div class="deal-description">
+              From $58.80: 2 Large Cheese Volcano Pizzas + 2 Mushroom Soups + 2 Garlic Bread + 2
+              Bottles Drink
+            </div>
+            <button class="remove-deal-btn">🗑️ Remove Deal</button>
+          </div>
+
+          <!-- Add Pizza Button -->
+          <button class="add-item-btn">
+            <span class="add-icon">+</span>
+            <span>Add a Pizza</span>
+          </button>
+
+          <!-- Cart Items -->
+          <div class="cart-items">
+            <div class="cart-item">
+              <div class="item-quantity">1 ×</div>
+              <div class="item-details">
+                <div class="item-name">Mushroom Soup</div>
+                <div class="item-actions">
+                  <button class="action-btn remove">Remove</button>
+                  <button class="action-btn edit">Edit</button>
+                  <button class="action-btn swap">Swap</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-item">
+              <div class="item-quantity">1 ×</div>
+              <div class="item-details">
+                <div class="item-name">Mushroom Soup</div>
+                <div class="item-actions">
+                  <button class="action-btn remove">Remove</button>
+                  <button class="action-btn edit">Edit</button>
+                  <button class="action-btn swap">Swap</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-item">
+              <div class="item-quantity">1 ×</div>
+              <div class="item-details">
+                <div class="item-name">Garlic Bread</div>
+                <div class="item-actions">
+                  <button class="action-btn remove">Remove</button>
+                  <button class="action-btn edit">Edit</button>
+                  <button class="action-btn swap">Swap</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="cart-item">
+              <div class="item-quantity">1 ×</div>
+              <div class="item-details">
+                <div class="item-name">Garlic Bread</div>
+                <div class="item-actions">
+                  <button class="action-btn remove">Remove</button>
+                  <button class="action-btn edit">Edit</button>
+                  <button class="action-btn swap">Swap</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Drink Button -->
+          <button class="add-item-btn">
+            <span class="add-icon">+</span>
+            <span>Add a Drink</span>
+          </button>
+        </div>
+
+        <!-- Price Summary -->
+        <div class="price-summary">
+          <div class="price-row">
+            <span class="price-label">Original Price</span>
+            <span class="price-value strikethrough">$67.70</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Voucher Discounts</span>
+            <span class="price-value discount">-$8.90</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Delivery Service Fee</span>
+            <span class="price-value">+$5.00</span>
+          </div>
+          <div class="price-row total">
+            <span class="price-label">Order Total</span>
+            <span class="price-value">$63.80</span>
+          </div>
+        </div>
+
+        <!-- Checkout Button -->
+        <button class="checkout-btn">
+          <span class="checkout-items">4 items | $63.80</span>
+          <span class="checkout-text">Finish Order</span>
+        </button>
+      </div>
     </div>
 
     <script src="cart.js"></script>
-</body>
-
+  </body>
 </html>
