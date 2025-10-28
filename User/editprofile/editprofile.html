@@ -47,7 +47,7 @@
             <span class="error-message" id="phoneError"></span>
           </div>
 
-          <!-- Password Fields -->
+          <!-- Password Fields (optional) -->
           <div class="form-group">
             <label for="password">New Password (optional)</label>
             <div class="password-input-wrapper">
@@ -85,7 +85,7 @@
         <div class="auth-footer">
           <p>
             Done editing?
-            <a href="../menu.php" class="link">Back to Menu</a>
+            <a href="../homepage/menu.php" class="link">Back to Menu</a>
           </p>
         </div>
       </div>
@@ -101,18 +101,23 @@
       }
 
       function clearErrors() {
-        document.querySelectorAll(".error-message").forEach((e) => (e.textContent = ""));
+        document.querySelectorAll(".error-message").forEach((e) => {
+          e.textContent = "";
+          e.classList.remove("show");
+        });
         document.querySelectorAll("input.error").forEach((e) => e.classList.remove("error"));
       }
 
       function isValidPhone(phone) {
-        const phoneRegex = /^[\\d\\s\\+\\-\\(\\)]+$/;
-        return phoneRegex.test(phone) && phone.replace(/\\D/g, "").length >= 8;
+        // fixed regex (no double escaping)
+        const phoneRegex = /^[\d\s\+\-\(\)]+$/;
+        return phoneRegex.test(phone) && phone.replace(/\D/g, "").length >= 8;
       }
 
       // ------------------- AUTH CHECK -------------------
       let currentUser = null;
       if (localStorage.getItem("isLoggedIn") !== "true") {
+        // user not logged in -> send to login
         window.location.href = "../login/login.html";
       }
 
@@ -127,7 +132,8 @@
       }
 
       // ------------------- FETCH PROFILE FROM SERVER -------------------
-      fetch("../register/editprofile.php?email=" + encodeURIComponent(currentUser.email))
+      // pulls latest user info (name, phone) from DB using their email
+      fetch("editprofile.php?email=" + encodeURIComponent(currentUser.email))
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
@@ -140,7 +146,7 @@
           document.getElementById("email").value = data.user.email || "";
           document.getElementById("phone").value = data.user.phone || "";
 
-          currentUser = data.user;
+          currentUser = data.user; // keep synced
         })
         .catch((err) => {
           console.error(err);
@@ -152,16 +158,14 @@
       document.querySelectorAll(".toggle-password").forEach((button) => {
         button.addEventListener("click", function () {
           const target = document.getElementById(this.dataset.target);
-          target.type = target.type === "password" ? "text" : "password";
-          this.textContent = target.type === "password" ? "👁️" : "🙈";
+          if (target.type === "password") {
+            target.type = "text";
+            this.textContent = "🙈";
+          } else {
+            target.type = "password";
+            this.textContent = "👁️";
+          }
         });
-      });
-
-      // ------------------- LOGOUT -------------------
-      document.getElementById("logoutBtn").addEventListener("click", () => {
-        localStorage.removeItem("isLoggedIn");
-        localStorage.removeItem("user");
-        window.location.href = "../login/login.html";
       });
 
       // ------------------- FORM SUBMIT -------------------
@@ -177,15 +181,23 @@
 
         let valid = true;
 
+        // name validation
         if (name.length < 2) {
           showError("nameError", "Name must be at least 2 characters", "name");
           valid = false;
         }
+
+        // phone validation
         if (!isValidPhone(phone)) {
           showError("phoneError", "Enter a valid phone number", "phone");
           valid = false;
         }
-        if (password || confirmPassword) {
+
+        // password validation (OPTIONAL)
+        // only check password rules if the user typed something
+        const wantsPasswordChange = password !== "" || confirmPassword !== "";
+
+        if (wantsPasswordChange) {
           if (password.length < 8) {
             showError("passwordError", "Password must be at least 8 characters", "password");
             valid = false;
@@ -198,9 +210,19 @@
 
         if (!valid) return;
 
-        const payload = { email, name, phone, password };
+        // build payload for backend
+        const payload = {
+          email,
+          name,
+          phone,
+        };
 
-        fetch("../register/editprofile.php", {
+        // only send password if user is changing it
+        if (wantsPasswordChange) {
+          payload.password = password;
+        }
+
+        fetch("../editprofile/editprofile.php", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -212,13 +234,23 @@
               return;
             }
 
-            // Update localStorage
-            const updatedUser = { ...currentUser, name: data.user.name, phone: data.user.phone };
-            if (password) updatedUser.password = password;
+            // sync localStorage with new info
+            const updatedUser = {
+              ...currentUser,
+              name: data.user.name,
+              phone: data.user.phone,
+            };
+
+            if (wantsPasswordChange) {
+              // this is only for client-side convenience.
+              // (DB is storing the hashed password, not this)
+              updatedUser.password = password;
+            }
 
             localStorage.setItem("user", JSON.stringify(updatedUser));
+
             alert("Profile updated successfully!");
-            window.location.href = "../menu.php";
+            window.location.href = "../homepage/menu.php";
           })
           .catch((err) => {
             console.error(err);

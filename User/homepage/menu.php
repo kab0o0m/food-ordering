@@ -253,7 +253,7 @@ function renderSectionTitle($cat) {
         btn.textContent = 'LOGIN';
         btn.onclick = () => {
           // adjust path depending on where login.html actually lives
-          window.location.href = 'login/login.html';
+          window.location.href = '../login/login.html';
         };
       }
     })();
