@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodHub - Admin Orders</title>
+    <link rel="stylesheet" href="../User/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      .account-btn {
+        background-color: #0056b3;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        border-radius: 5px;
+      }
+
+      .account-btn:hover {
+        background-color: #004080;
+      }
+
+      .orders-container {
+        margin: 20px;
+      }
+
+      .orders-main {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .orders-main h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .order-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background-color: #f8f8f8;
+      }
+
+      .order-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 18px;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .order-info {
+        margin-bottom: 15px;
+      }
+
+      .order-items {
+        margin-bottom: 15px;
+      }
+
+      .order-item {
+        padding: 5px 0;
+        border-bottom: 1px solid #ddd;
+        margin-bottom: 5px;
+      }
+
+      .update-status-btn {
+        background-color: #28a745;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+
+      .update-status-btn:hover {
+        background-color: #218838;
+      }
+
+      .order-status {
+        font-weight: bold;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .order-card {
+          padding: 10px;
+        }
+
+        .order-header {
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="logo">FoodHub</div>
+      <ul class="nav-links">
+        <li><a href="../homepage/menu.php">HOME</a></li>
+        <li><a href="../orders/myorders.html">MY ORDERS</a></li>
+      </ul>
+      <button class="account-btn" id="accountBtn">MY ACCOUNT</button>
+    </nav>
+
+    <!-- Admin Orders Content -->
+    <div class="orders-container">
+      <div class="orders-main">
+        <h2>All Orders</h2>
+
+        <div id="orders-list">
+          <!-- Orders will be dynamically injected here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Fetch Orders
+      fetch("admin.php")
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            alert("Unable to load orders: " + data.message);
+            return;
+          }
+
+          // If no orders, show a message
+          if (data.orders.length === 0) {
+            document.getElementById("orders-list").innerHTML = `
+              <p>No orders placed yet.</p>
+            `;
+            return;
+          }
+
+          // Loop through orders and render them
+          data.orders.forEach((order) => {
+            const orderDiv = document.createElement("div");
+            orderDiv.className = "order-card";
+            orderDiv.innerHTML = `
+              <div class="order-header">
+                <span class="order-id">Order #${order.id}</span>
+                <span class="order-date">${new Date(order.order_date).toLocaleString()}</span>
+              </div>
+              <div class="order-info">
+                <p><strong>Total:</strong> $${order.total}</p>
+                <p><strong>Status:</strong> <span class="order-status">${
+                  order.order_status
+                }</span></p>
+              </div>
+
+              <!-- Order Items -->
+              <div class="order-items">
+                ${order.items
+                  .map(
+                    (item) =>
+                      `<div class="order-item">
+                         <p><strong>${item.product_name}</strong></p>
+                         <p>Qty: ${item.quantity}</p>
+                         <p>Price: $${item.line_total}</p>
+                       </div>`
+                  )
+                  .join("")}
+              </div>
+
+              <!-- Update Status Button -->
+              <button class="update-status-btn" data-order-id="${order.id}" data-current-status="${
+              order.order_status
+            }">
+                Change Status to READY
+              </button>
+            `;
+
+            // Add event listener to change order status to READY
+            orderDiv.querySelector(".update-status-btn").addEventListener("click", (e) => {
+              const orderId = e.target.getAttribute("data-order-id");
+              const currentStatus = e.target.getAttribute("data-current-status");
+
+              // Only allow status change if it's not already "READY"
+              if (currentStatus === "READY") {
+                alert("This order is already marked as READY.");
+                return;
+              }
+
+              // Update order status to READY
+              fetch("update_order_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ order_id: orderId, status: "READY" }),
+              })
+                .then((res) => res.json())
+                .then((data) => {
+                  if (data.success) {
+                    alert("Order status updated to READY!");
+                    location.reload(); // Reload to see the status change
+                  } else {
+                    alert("Failed to update order status.");
+                  }
+                })
+                .catch((err) => {
+                  console.error("Error updating order status:", err);
+                  alert("Unexpected error occurred.");
+                });
+            });
+
+            // Append to orders list
+            document.getElementById("orders-list").appendChild(orderDiv);
+          });
+        })
+        .catch((err) => {
+          console.error("Error fetching orders:", err);
+          alert("Error loading orders.");
+        });
+
+      // --- Navbar Account Button Logic ---
+      const accountBtn = document.getElementById("accountBtn");
+      if (accountBtn) {
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        if (isLoggedIn) {
+          const rawUser = localStorage.getItem("user");
+          let username = "Account";
+          if (rawUser) {
+            try {
+              const u = JSON.parse(rawUser);
+              if (u && u.name) {
+                username = u.name.split(" ")[0];
+              }
+            } catch (e) {}
+          }
+          accountBtn.textContent = username;
+          accountBtn.addEventListener("click", () => {
+            window.location.href = "../account/account.html";
+          });
+        } else {
+          accountBtn.textContent = "LOGIN";
+          accountBtn.addEventListener("click", () => {
+            window.location.href = "../login/login.html";
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
