@@ -1,8 +1,9 @@
 // --- helpers ---
+
+// Load cart data from localStorage
 function loadCart() {
   try {
     const raw = localStorage.getItem("cart") || "[]";
-    console.log(raw);
     return JSON.parse(raw);
   } catch (e) {
     console.warn("Failed to parse cart from storage", e);
@@ -10,37 +11,17 @@ function loadCart() {
   }
 }
 
+// Save cart data to localStorage
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// format money as $12.34
+// Format money as $12.34
 function money(val) {
   return "$" + Number(val).toFixed(2);
 }
 
-// --- helpers ---
-function loadCart() {
-  try {
-    const raw = localStorage.getItem("cart") || "[]";
-    console.log("Loaded cart:", raw);
-    return JSON.parse(raw);
-  } catch (e) {
-    console.warn("Failed to parse cart from storage", e);
-    return [];
-  }
-}
-
-function saveCart(cart) {
-  localStorage.setItem("cart", JSON.stringify(cart));
-}
-
-// format money as $12.34
-function money(val) {
-  return "$" + Number(val).toFixed(2);
-}
-
-// recalc everything and re-render
+// --- Render Cart and Totals ---
 function renderCart() {
   const cartContainer = document.getElementById("cart-items");
   const cart = loadCart();
@@ -48,7 +29,7 @@ function renderCart() {
   if (!cartContainer) return;
   cartContainer.innerHTML = "";
 
-  // If cart empty, show message
+  // If cart is empty, show message
   if (cart.length === 0) {
     cartContainer.innerHTML = `
       <div class="empty-cart">
@@ -74,36 +55,36 @@ function renderCart() {
     row.className = "cart-item";
 
     row.innerHTML = `
-    <div class="cart-item-card">
+      <div class="cart-item-card">
         <div class="item-info">
-        <div class="item-name">${item.name}</div>
-        <div class="item-line-price">${money(lineTotal)}</div>
+          <div class="item-name">${item.name}</div>
+          <div class="item-line-price">${money(lineTotal)}</div>
         </div>
 
         <div class="item-controls">
-        <div class="qty-control">
+          <div class="qty-control">
             <button class="qty-btn dec">−</button>
             <span class="item-quantity">${item.qty}</span>
             <button class="qty-btn inc">+</button>
+          </div>
+          <button class="action-btn remove">🗑️</button>
         </div>
-        <button class="action-btn remove">🗑️</button>
-        </div>
-    </div>
+      </div>
     `;
 
-    // qty decrease
+    // Decrease quantity
     row.querySelector(".dec").addEventListener("click", () => {
       const updatedCart = loadCart();
       if (updatedCart[index].qty > 1) {
         updatedCart[index].qty -= 1;
       } else {
-        updatedCart.splice(index, 1);
+        updatedCart.splice(index, 1); // Remove item if quantity is 0
       }
       saveCart(updatedCart);
       renderCart();
     });
 
-    // qty increase
+    // Increase quantity
     row.querySelector(".inc").addEventListener("click", () => {
       const updatedCart = loadCart();
       updatedCart[index].qty += 1;
@@ -111,7 +92,7 @@ function renderCart() {
       renderCart();
     });
 
-    // remove item
+    // Remove item
     row.querySelector(".remove").addEventListener("click", () => {
       const updatedCart = loadCart();
       updatedCart.splice(index, 1);
@@ -119,7 +100,7 @@ function renderCart() {
       renderCart();
     });
 
-    // add to container
+    // Add to container
     cartContainer.appendChild(row);
   });
 
@@ -127,24 +108,26 @@ function renderCart() {
   updateTotals(cart);
 }
 
+// --- Update Cart Totals ---
 function updateTotals(cart) {
   const originalPriceEl = document.getElementById("original-price");
   const discountEl = document.getElementById("discount-amount");
   const totalEl = document.getElementById("order-total");
   const checkoutItemsText = document.getElementById("checkout-items-text");
 
-  // Subtotal before discount
+  // Calculate subtotal before discount
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  // Voucher / discount logic (placeholder = 0 for now)
+  // Placeholder discount logic
   const discount = 0;
 
-  // No delivery fee anymore
+  // Total calculation (no delivery fee for now)
   const grandTotal = subtotal - discount;
 
   // Item count
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
+  // Update UI elements
   if (originalPriceEl) originalPriceEl.textContent = money(subtotal);
   if (discountEl) discountEl.textContent = money(discount);
   if (totalEl) totalEl.textContent = money(grandTotal);
@@ -183,7 +166,7 @@ function updateTotals(cart) {
   }
 })();
 
-// --- Add More Buttons ---
+// --- Add More Items Buttons ---
 const addPizzaBtn = document.getElementById("add-pizza-btn");
 if (addPizzaBtn) {
   addPizzaBtn.addEventListener("click", () => {
@@ -200,20 +183,91 @@ if (addDrinkBtn) {
 
 // --- Initialize on page load ---
 document.addEventListener("DOMContentLoaded", () => {
-  // Optional: preload cart items for testing
-  // Uncomment below if you want demo data to show up automatically
-  /*
-  const demoCart = [
-    { id: "1", name: "Margherita Pizza", price: 12.9, qty: 18 },
-    { id: "2", name: "Pepperoni Pizza", price: 15.5, qty: 3 },
-    { id: "3", name: "Hawaiian Pizza", price: 14.2, qty: 1 },
-    { id: "44", name: "Cheesy Dip", price: 2.9, qty: 1 },
-    { id: "13", name: "Four Cheese Supreme", price: 17.2, qty: 1 }
-  ];
-  if (!localStorage.getItem("cart")) {
-    saveCart(demoCart);
-  }
-  */
-
   renderCart();
 });
+
+// --- Checkout Button Event Listener ---
+const checkoutBtn = document.getElementById("checkout-btn");
+if (checkoutBtn) {
+  checkoutBtn.addEventListener("click", () => {
+    const cart = loadCart();
+
+    if (!cart.length) {
+      alert("Your cart is empty.");
+      return;
+    }
+
+    // Must be logged in
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (!isLoggedIn) {
+      alert("Please log in before checking out.");
+      window.location.href = "../login/login.html";
+      return;
+    }
+
+    // Get user info from localStorage
+    let userData = {};
+    try {
+      userData = JSON.parse(localStorage.getItem("user") || "{}");
+    } catch (e) {
+      userData = {};
+    }
+
+    if (!userData.email || !userData.name || !userData.phone) {
+      alert("Your profile is incomplete. Please update your profile before ordering.");
+      window.location.href = "../account/editprofile.html";
+      return;
+    }
+
+    // Calculate totals
+    const totals = calcTotalsForPayload(cart);
+
+    // Prepare the payload to send to the backend
+    const payload = {
+      name: userData.name,
+      phone: userData.phone,
+      email: userData.email,
+      cart: cart,
+      total: totals.total,
+    };
+
+    console.log("Payload to send:", payload); // Log the payload for debugging
+
+    // Send the data to checkout.php
+    fetch("../checkout/checkout.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Response from server:", data); // Log the response for debugging
+
+        if (!data.success) {
+          alert("Checkout failed: " + data.message);
+          return;
+        }
+
+        // Store the last order id for later reference (thank you / my orders page)
+        localStorage.setItem("lastOrderId", data.order_id);
+
+        // Clear the cart
+        localStorage.removeItem("cart");
+
+        // Redirect to "my orders" page
+        window.location.href = "../checkout/checkout.html";
+      })
+      .catch((err) => {
+        console.error("Checkout Error:", err);
+        alert("Unexpected error during checkout.");
+      });
+  });
+}
+
+// --- Calculate totals for payload ---
+function calcTotalsForPayload(cart) {
+  const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const discount = 0; // placeholder
+  const total = subtotal - discount;
+  return { subtotal, discount, total };
+}
