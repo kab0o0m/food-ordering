@@ -198,7 +198,7 @@
 
       .order-body {
         display: grid;
-        grid-template-columns: 1fr 220px;
+        grid-template-columns: 1fr 300px;
         gap: 16px;
         padding-top: 12px;
       }
@@ -306,8 +306,8 @@
     <nav class="navbar">
       <div class="logo">FoodHub</div>
       <ul class="nav-links">
-        <li><a href="../homepage/menu.php">HOME</a></li>
-        <li><a href="../orders/myorders.html">MY ORDERS</a></li>
+        <li><a href="../User/homepage/menu.php">HOME</a></li>
+        <li><a href="../User/checkout/checkout.html">MY ORDERS</a></li>
       </ul>
       <button class="account-btn" id="accountBtn">MY ACCOUNT</button>
     </nav>
@@ -412,7 +412,6 @@
           <div class="order-top">
             <div>
               <div class="order-id">Order #${order.id}</div>
-              <div class="order-date">${new Date(order.order_date).toLocaleString()}</div>
             </div>
             <div class="right-top">
               <span class="${statusBadgeClass(order.order_status)}">${
