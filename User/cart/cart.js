@@ -34,15 +34,8 @@ function renderCart() {
     cartContainer.innerHTML = `
       <div class="empty-cart">
         <p>Your cart is empty.</p>
-        <button id="go-menu-btn" class="add-more-btn">Browse Menu</button>
       </div>
     `;
-    const goMenuBtn = document.getElementById("go-menu-btn");
-    if (goMenuBtn) {
-      goMenuBtn.addEventListener("click", () => {
-        window.location.href = "../homepage/menu.php";
-      });
-    }
     updateTotals(cart);
     return;
   }

@@ -149,7 +149,8 @@ function renderSectionTitle($cat) {
       <div class="logo">FoodHub</div>
       <ul class="nav-links">
         <li><a href="menu.php">HOME</a></li>
-        <li><a href="../cart/cart.html">MY ORDER</a></li>
+        <li><a href="../checkout/checkout.html">MY ORDERS</a></li>
+        <li><a href="../cart/cart.html">CART</a></li>
       </ul>
       <button class="account-btn" id="accountBtn">LOGIN</button>
     </nav>
