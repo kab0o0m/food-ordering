@@ -76,12 +76,6 @@ document.querySelector(".toggle-password").addEventListener("click", function ()
   }
 });
 
-// Forgot password link
-document.querySelector(".forgot-link").addEventListener("click", function (e) {
-  e.preventDefault();
-  alert("Password reset feature not implemented yet");
-});
-
 // Helper functions
 function showError(errorId, message, inputId) {
   const errorElement = document.getElementById(errorId);
