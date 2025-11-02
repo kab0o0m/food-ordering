@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodHub - Admin Orders</title>
+    <!-- Your global styles (optional) -->
+    <link rel="stylesheet" href="../User/style.css" />
+
+    <style>
+      :root {
+        --bg: #f6f7fb;
+        --card: #fff;
+        --text: #1f2a37;
+        --muted: #6b7280;
+        --primary: #ff5a3d; /* Lazada/Shopee vibe */
+        --primary-600: #e34f35;
+        --green: #16a34a;
+        --green-600: #15803d;
+        --amber: #f59e0b;
+        --border: #e5e7eb;
+        --badge: #f3f4f6;
+        --shadow: 0 6px 16px rgba(17, 24, 39, 0.08);
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+          Arial;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      /* Navbar */
+      .navbar {
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+      }
+      .logo {
+        font-weight: 800;
+        font-size: 20px;
+        letter-spacing: 0.3px;
+      }
+      .nav-links {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: 14px;
+      }
+      .nav-links a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .account-btn {
+        border: 0;
+        background: var(--primary);
+        color: #fff;
+        padding: 8px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .account-btn:hover {
+        background: var(--primary-600);
+      }
+
+      /* Shell */
+      .page {
+        max-width: 1100px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+
+      /* Header row: title + tabs + search */
+      .admin-bar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: end;
+        margin-bottom: 16px;
+      }
+      .title {
+        font-size: 26px;
+        font-weight: 800;
+        margin: 0 0 6px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+        flex-wrap: wrap;
+      }
+      .tab {
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--badge);
+        color: var(--muted);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .tab.active {
+        background: #ffe7e2;
+        color: var(--primary);
+        border-color: #ffd5cd;
+      }
+
+      .search-wrap {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+      .search {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-width: 240px;
+        outline: none;
+      }
+      .refresh-btn {
+        border: 0;
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      /* Order Card */
+      .order-card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 12px 14px;
+        margin-bottom: 16px;
+      }
+
+      .order-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px dashed var(--border);
+      }
+      .order-id {
+        font-weight: 900;
+        font-size: 15px;
+        letter-spacing: 0.2px;
+      }
+      .order-date {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .right-top {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .status-badge {
+        font-size: 12px;
+        font-weight: 800;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--badge);
+      }
+      .status-pending {
+        background: #fff7ed;
+        border-color: #fed7aa;
+        color: #c2410c;
+      }
+      .status-completed {
+        background: #ecfdf5;
+        border-color: #bbf7d0;
+        color: #065f46;
+      }
+
+      .order-body {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 16px;
+        padding-top: 12px;
+      }
+
+      /* Items listing (left) */
+      .items {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .item-row {
+        display: grid;
+        grid-template-columns: 1fr 70px 80px 90px;
+        gap: 8px;
+        align-items: center;
+        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .item-name {
+        font-weight: 700;
+      }
+      .qty,
+      .price,
+      .line {
+        text-align: right;
+        color: #111827;
+        font-weight: 700;
+      }
+      .muter {
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      /* Order info & actions (right) */
+      .info-box {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: 700;
+      }
+      .label {
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .total {
+        font-size: 18px;
+        font-weight: 900;
+      }
+
+      .action-row {
+        display: flex;
+        gap: 8px;
+      }
+      .mark-btn {
+        border: 0;
+        background: var(--green);
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 800;
+        width: 100%;
+      }
+      .mark-btn:hover {
+        background: var(--green-600);
+      }
+      .mark-btn[disabled] {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      /* Empty state */
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 30px 12px;
+        border: 1px dashed var(--border);
+        border-radius: 14px;
+        background: #fff;
+        font-weight: 700;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .order-body {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="logo">FoodHub</div>
+      <ul class="nav-links">
+        <li><a href="../User/homepage/menu.php">HOME</a></li>
+        <li><a href="../User/checkout/checkout.html">MY ORDERS</a></li>
+      </ul>
+      <button class="account-btn" id="accountBtn">MY ACCOUNT</button>
+    </nav>
+
+    <div class="page">
+      <div class="admin-bar">
+        <div>
+          <h1 class="title">All Orders</h1>
+          <div class="tabs">
+            <button class="tab active" data-filter="all">All</button>
+            <button class="tab" data-filter="Pending">Pending</button>
+            <button class="tab" data-filter="Completed">Completed</button>
+          </div>
+        </div>
+
+        <div class="search-wrap">
+          <input
+            id="search"
+            class="search"
+            type="search"
+            placeholder="Search by Order # / Email / Name" />
+          <button class="refresh-btn" id="refreshBtn">Refresh</button>
+        </div>
+      </div>
+
+      <div id="orders-list"></div>
+    </div>
+
+    <script>
+      // --- Navbar Account Button Logic ---
+      (function () {
+        const btn = document.getElementById("accountBtn");
+        if (!btn) return;
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+        if (isLoggedIn) {
+          const raw = localStorage.getItem("user");
+          let username = "Account";
+          if (raw) {
+            try {
+              const u = JSON.parse(raw);
+              if (u && u.name) username = u.name.split(" ")[0];
+            } catch (e) {}
+          }
+          btn.textContent = username;
+          btn.onclick = () => (window.location.href = "../account/account.html");
+        } else {
+          btn.textContent = "LOGIN";
+          btn.onclick = () => (window.location.href = "../login/login.html");
+        }
+      })();
+
+      // --- State ---
+      let ALL_ORDERS = [];
+      let CURRENT_FILTER = "all";
+      let CURRENT_QUERY = "";
+
+      // --- Helpers ---
+      function money(n) {
+        return "$" + Number(n ?? 0).toFixed(2);
+      }
+
+      function statusBadgeClass(status) {
+        const s = (status || "").toLowerCase();
+        if (s === "completed") return "status-badge status-completed";
+        return "status-badge status-pending";
+      }
+
+      function matchesQuery(order, q) {
+        if (!q) return true;
+        q = q.toLowerCase();
+        return (
+          String(order.id).includes(q) ||
+          (order.customer_email || "").toLowerCase().includes(q) ||
+          (order.customer_name || "").toLowerCase().includes(q)
+        );
+      }
+
+      function filterOrders() {
+        return ALL_ORDERS.filter((o) => {
+          const statusOk = CURRENT_FILTER === "all" ? true : o.order_status === CURRENT_FILTER;
+          const qOk = matchesQuery(o, CURRENT_QUERY);
+          return statusOk && qOk;
+        });
+      }
+
+      function render() {
+        const list = document.getElementById("orders-list");
+        list.innerHTML = "";
+
+        const orders = filterOrders();
+        if (!orders.length) {
+          list.innerHTML = `<div class="empty">No orders found.</div>`;
+          return;
+        }
+
+        orders.forEach((order) => {
+          const items = Array.isArray(order.items) ? order.items : [];
+
+          const card = document.createElement("div");
+          card.className = "order-card";
+          card.innerHTML = `
+          <div class="order-top">
+            <div>
+              <div class="order-id">Order #${order.id}</div>
+            </div>
+            <div class="right-top">
+              <span class="${statusBadgeClass(order.order_status)}">${
+            order.order_status || "Pending"
+          }</span>
+            </div>
+          </div>
+
+          <div class="order-body">
+            <div class="items">
+              ${
+                items.length
+                  ? items
+                      .map(
+                        (it) => `
+                      <div class="item-row">
+                        <div class="item-name">${it.product_name}</div>
+                        <div class="qty"><span class="muter">Qty</span> ${it.quantity}</div>
+                        <div class="price"><span class="muter">Price</span> ${money(
+                          it.unit_price
+                        )}</div>
+                        <div class="line"><span class="muter">Total</span> ${money(
+                          it.line_total
+                        )}</div>
+                      </div>
+                    `
+                      )
+                      .join("")
+                  : `<div class="item-row"><div class="item-name">No items</div><div></div><div></div><div></div></div>`
+              }
+            </div>
+
+            <div class="info-box">
+              <div class="info-row"><span class="label">Customer</span><span>${
+                order.customer_name || "-"
+              }</span></div>
+              <div class="info-row"><span class="label">Email</span><span>${
+                order.customer_email || "-"
+              }</span></div>
+              <div class="info-row"><span class="label">Phone</span><span>${
+                order.customer_phone || "-"
+              }</span></div>
+              <div class="info-row total"><span>Total</span><span>${money(order.total)}</span></div>
+
+              <div class="action-row">
+                <button
+                  class="mark-btn"
+                  data-id="${order.id}"
+                  ${String(order.order_status).toLowerCase() === "completed" ? "disabled" : ""}>
+                  ${
+                    String(order.order_status).toLowerCase() === "completed"
+                      ? "Completed"
+                      : "Ready for Collection"
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+
+          // Button handler
+          const btn = card.querySelector(".mark-btn");
+          if (btn && !btn.disabled) {
+            btn.addEventListener("click", () => updateStatus(order.id, "Completed", btn));
+          }
+
+          list.appendChild(card);
+        });
+      }
+
+      function setActiveTab(filter) {
+        document.querySelectorAll(".tab").forEach((t) => {
+          t.classList.toggle("active", t.dataset.filter === filter);
+        });
+      }
+
+      // --- Fetch data ---
+      function fetchOrders() {
+        return fetch("admin.php")
+          .then((res) => res.json())
+          .then((data) => {
+            if (!data.success) throw new Error(data.message || "Failed to fetch");
+            ALL_ORDERS = data.orders || [];
+            render();
+          });
+      }
+
+      // --- Update Status ---
+      function updateStatus(orderId, status, btnRef) {
+        if (!orderId) return;
+        btnRef.disabled = true;
+        btnRef.textContent = "Updating…";
+
+        fetch("update_order_status.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order_id: orderId, status }),
+        })
+          .then((r) => r.json())
+          .then((d) => {
+            if (!d.success) {
+              alert(d.message || "Failed to update order status");
+              btnRef.disabled = false;
+              btnRef.textContent = "Ready For Collection";
+              return;
+            }
+            // Optimistic update
+            const idx = ALL_ORDERS.findIndex((o) => o.id == orderId);
+            if (idx > -1) ALL_ORDERS[idx].order_status = "Completed";
+            render();
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Unexpected error.");
+            btnRef.disabled = false;
+            btnRef.textContent = "Ready For Collection";
+          });
+      }
+
+      // --- Events ---
+      document
+        .getElementById("refreshBtn")
+        .addEventListener("click", () => fetchOrders().catch(() => {}));
+      document.querySelectorAll(".tab").forEach((t) => {
+        t.addEventListener("click", () => {
+          CURRENT_FILTER = t.dataset.filter;
+          setActiveTab(CURRENT_FILTER);
+          render();
+        });
+      });
+      document.getElementById("search").addEventListener("input", (e) => {
+        CURRENT_QUERY = e.target.value.trim();
+        render();
+      });
+
+      // Init
+      fetchOrders().catch((err) => {
+        console.error("Error fetching orders:", err);
+        document.getElementById(
+          "orders-list"
+        ).innerHTML = `<div class="empty">Error loading orders.</div>`;
+      });
+    </script>
+  </body>
+</html>

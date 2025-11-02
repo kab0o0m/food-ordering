@@ -19,9 +19,13 @@ if (!$conn) {
     exit;
 }
 
-// --- Fetch All Orders ---
+// --- Get User Email from Request ---
+$email = isset($_GET['email']) ? mysqli_real_escape_string($conn, $_GET['email']) : '';
+
+// --- Fetch Orders for the User ---
 $sql = "SELECT o.id, o.customer_name, o.customer_phone, o.customer_email, o.order_date, o.total, o.order_status
         FROM orders o
+        WHERE o.customer_email = '$email'
         ORDER BY o.order_date DESC";
 
 $result = mysqli_query($conn, $sql);
