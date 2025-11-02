@@ -26,7 +26,7 @@ mysqli_close($conn);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodHub - Product Management</title>
-    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../../User/style.css" />
     <style>
         .management-container {
             max-width: 1400px;
@@ -259,8 +259,8 @@ mysqli_close($conn);
         <div class="logo">FoodHub Admin</div>
         <ul class="nav-links">
             <li><a href="../homepage/menu.php">HOME</a></li>
-            <li><a href="sales-report.php">SALES REPORT</a></li>
-            <li><a href="product-management.php">PRODUCTS</a></li>
+            <li><a href="../sales-report/sales-report.html">SALES REPORT</a></li>
+            <li><a href="/">PRODUCTS</a></li>
         </ul>
         <button class="account-btn" onclick="window.location.href='../homepage/menu.php'">EXIT ADMIN</button>
     </nav>
@@ -296,10 +296,10 @@ mysqli_close($conn);
                             <td><?php echo $row['id']; ?></td>
                             <td>
                                 <img 
-                                    src="../<?php echo htmlspecialchars($row['image_url']); ?>" 
+                                    src="../../User/<?php echo htmlspecialchars($row['image_url']); ?>" 
                                     alt="product" 
                                     class="product-image"
-                                    onerror="this.src='../assets/images/best-sellers/pizza-placeholder.png';"
+                                    
                                 >
                             </td>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
@@ -357,9 +357,9 @@ mysqli_close($conn);
                 </div>
 
                 <div class="form-group">
-                    <label>Image URL *</label>
-                    <input type="text" id="productImage" name="image_url" placeholder="assets/images/category/image.png" required>
-                </div>
+                    <!-- <label>Image URL *</label>
+                    <input type="text" id="productImage" name="image_url" placeholder="assets/images/category/image.png" required> -->
+                </div> 
 
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
@@ -368,7 +368,6 @@ mysqli_close($conn);
             </form>
         </div>
     </div>
-
     <script>
         let isEditMode = false;
 
@@ -380,7 +379,7 @@ mysqli_close($conn);
             document.getElementById('productDescription').value = product.description;
             document.getElementById('productPrice').value = product.price;
             document.getElementById('productCategory').value = product.category;
-            document.getElementById('productImage').value = product.image_url;
+            // document.getElementById('productImage').value = product.image_url;
             document.getElementById('productModal').classList.add('show');
         }
 

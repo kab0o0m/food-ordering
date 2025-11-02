@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FoodHub - Sales Report</title>
+    <link rel="stylesheet" href="../../User/style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f9f9f9;
+        margin: 0;
+      }
+      .report-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      .report-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 10px;
+      }
+      .report-header h1 {
+        margin: 0;
+      }
+      .stat-grid {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+      }
+      .stat-card {
+        flex: 1;
+        min-width: 200px;
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 2rem;
+      }
+      th,
+      td {
+        padding: 1rem;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+      }
+      th {
+        background: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">FoodHub Admin</div>
+      <ul class="nav-links">
+        <li><a href="../../User/homepage/menu.php">HOME</a></li>
+        <li><a href="/">SALES REPORT</a></li>
+        <li><a href="../product-management/product-management.php">PRODUCTS</a></li>
+      </ul>
+      <button class="account-btn" onclick="window.location.href='../homepage/menu.php'">
+        EXIT ADMIN
+      </button>
+    </nav>
+
+    <div class="report-container">
+      <div class="report-header">
+        <h1>📊 Sales Report</h1>
+        <p>Comprehensive analytics and insights</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <h3>Total Revenue</h3>
+          <p id="totalRevenue">$0.00</p>
+        </div>
+        <div class="stat-card">
+          <h3>Total Orders</h3>
+          <p id="totalOrders">0</p>
+        </div>
+        <div class="stat-card">
+          <h3>Average Order Value</h3>
+          <p id="averageValue">$0.00</p>
+        </div>
+      </div>
+
+      <table id="popularTable">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity Sold</th>
+            <th>Revenue</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+
+    <script>
+      async function loadReport() {
+        try {
+          const res = await fetch("sales-report.php");
+          const data = await res.json();
+
+          if (!data.success) {
+            alert("Failed to load report");
+            return;
+          }
+
+          // Revenue stats
+          document.getElementById("totalRevenue").innerText =
+            "$" + parseFloat(data.revenue.total_revenue || 0).toFixed(2);
+          document.getElementById("totalOrders").innerText = data.revenue.total_orders || 0;
+          const avg =
+            data.revenue.total_orders > 0
+              ? data.revenue.total_revenue / data.revenue.total_orders
+              : 0;
+          document.getElementById("averageValue").innerText = "$" + avg.toFixed(2);
+
+          // Popular products
+          const popularBody = document.querySelector("#popularTable tbody");
+          data.popular.forEach((item) => {
+            popularBody.innerHTML += `<tr>
+            <td>${item.product_name}</td>
+            <td>${item.total_sold}</td>
+            <td>$${parseFloat(item.revenue).toFixed(2)}</td>
+          </tr>`;
+          });
+
+          // Category sales
+          const categoryBody = document.querySelector("#categoryTable tbody");
+          data.category.forEach((item) => {
+            categoryBody.innerHTML += `<tr>
+            <td>${item.category}</td>
+            <td>${item.total_sold}</td>
+            <td>$${parseFloat(item.revenue).toFixed(2)}</td>
+          </tr>`;
+          });
+
+          // Trend
+          const trendBody = document.querySelector("#trendTable tbody");
+          data.trend.forEach((item) => {
+            trendBody.innerHTML += `<tr>
+            <td>${item.period}</td>
+            <td>${item.order_count}</td>
+            <td>$${parseFloat(item.revenue).toFixed(2)}</td>
+          </tr>`;
+          });
+        } catch (err) {
+          console.error("Error:", err);
+        }
+      }
+
+      loadReport();
+    </script>
+  </body>
+</html>

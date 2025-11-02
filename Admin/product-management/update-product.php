@@ -30,6 +30,7 @@ function send_json($ok, $msg) {
 }
 
 // Handle POST request
+// Handle POST request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get form data
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
@@ -39,23 +40,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $category = isset($_POST['category']) ? trim($_POST['category']) : '';
     $image_url = isset($_POST['image_url']) ? trim($_POST['image_url']) : '';
 
-    // Validate required fields
-    if ($id <= 0 || $name === '' || $description === '' || $price <= 0 || $category === '' || $image_url === '') {
-        send_json(false, "All fields are required.");
+    // Validate required fields except image
+    if ($id <= 0 || $name === '' || $description === '' || $price <= 0 || $category === '') {
+        send_json(false, "All fields except image are required.");
     }
 
-    // Check if product exists
-    $check_sql = "SELECT id FROM products WHERE id = ? LIMIT 1";
-    $check_stmt = mysqli_prepare($conn, $check_sql);
-    mysqli_stmt_bind_param($check_stmt, "i", $id);
-    mysqli_stmt_execute($check_stmt);
-    $check_result = mysqli_stmt_get_result($check_stmt);
+    // Fetch current image_url from DB
+    $get_img_sql = "SELECT image_url FROM products WHERE id = ? LIMIT 1";
+    $get_img_stmt = mysqli_prepare($conn, $get_img_sql);
+    mysqli_stmt_bind_param($get_img_stmt, "i", $id);
+    mysqli_stmt_execute($get_img_stmt);
+    $get_img_result = mysqli_stmt_get_result($get_img_stmt);
 
-    if (mysqli_num_rows($check_result) === 0) {
+    if (mysqli_num_rows($get_img_result) === 0) {
         send_json(false, "Product not found.");
     }
 
-    // Update product using prepared statement
+    $row = mysqli_fetch_assoc($get_img_result);
+    $existing_image_url = $row['image_url'];
+
+    // Keep the old image URL if not provided
+    if ($image_url === '') {
+        $image_url = $existing_image_url;
+    }
+
+    // Update product
     $update_sql = "UPDATE products SET name = ?, description = ?, price = ?, category = ?, image_url = ? WHERE id = ?";
     $stmt = mysqli_prepare($conn, $update_sql);
 
@@ -73,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     mysqli_stmt_close($stmt);
 }
+
 
 mysqli_close($conn);
 ?>

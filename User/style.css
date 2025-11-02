@@ -1741,3 +1741,41 @@
   color: #c0392b;
   transform: scale(1.2);
 }
+/* Empty cart section */
+.empty-cart {
+  text-align: center;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin: 30px auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-cart p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* Browse Menu / Add More button */
+#go-menu-btn {
+  background: linear-gradient(135deg, #ff9800, #ff6f00);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.add-more-btn:hover {
+  background: linear-gradient(135deg, #ffb74d, #ff6f00);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 111, 0, 0.3);
+}
+
+.add-more-btn:active {
+  transform: scale(0.97);
+}
