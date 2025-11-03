@@ -79,7 +79,7 @@ if ($status === 'Completed') {
                 <th align='left'>Item</th>
                 <th align='center'>Qty</th>
                 <th align='right'>Price</th>
-                <th align='right'>Line Total</th>
+                <th align='right'>Total</th>
               </tr>
             </thead>
             <tbody>$rows
