@@ -1,101 +1,18 @@
-// Login Form Validation
-const loginForm = document.getElementById("loginForm");
-
-loginForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  clearErrors();
-
-  let isValid = true;
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (email === "") {
-    showError("emailError", "Please enter your email address", "email");
-    isValid = false;
-  } else if (!isValidEmail(email)) {
-    showError("emailError", "Please enter a valid email address", "email");
-    isValid = false;
-  }
-
-  if (password === "") {
-    showError("passwordError", "Please enter your password", "password");
-    isValid = false;
-  }
-
-  if (isValid) {
-    loginUser(email, password);
-  }
-});
-
-function loginUser(email, password) {
-  fetch("login.php", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.success) {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        // show success toast
-        showToast(`Welcome back, ${data.user.name}!`, "success");
-
-        // redirect after short delay
-        setTimeout(() => {
-          window.location.href = "../homepage/menu.php";
-        }, 2000);
-      } else {
-        showError("passwordError", data.message || "Invalid email or password", "password");
-        showToast("Invalid email or password", "error");
-      }
-    })
-    .catch((err) => {
-      console.error("Login error:", err);
-      showError("passwordError", "Server error. Please try again later.");
-      showToast("Server error. Please try again.", "error");
-    });
-}
-
-// Toast popup
-function showToast(message, type) {
-  const toast = document.getElementById("toast");
-  const toastMessage = document.getElementById("toastMessage");
-
-  toastMessage.textContent = message;
-  toast.classList.add("show");
-
-  if (type === "error") toast.classList.add("error");
-  else toast.classList.remove("error");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000);
-}
-
-// Toggle password visibility
-document.querySelector(".toggle-password").addEventListener("click", function () {
-  const input = document.getElementById("password");
-
-  if (input.type === "password") {
-    input.type = "text";
-    this.textContent = "🙈";
+// ---------- helpers ----------
+function notify(type = "success", title = "", text = "", options = {}) {
+  if (typeof Swal !== "undefined") {
+    Swal.fire(Object.assign({ icon: type, title, text }, options));
   } else {
-    input.type = "password";
-    this.textContent = "👁️";
+    alert(`${title ? title + ": " : ""}${text || ""}`);
   }
-});
+}
 
-// Helper functions
 function showError(errorId, message, inputId) {
-  const errorElement = document.getElementById(errorId);
-  if (!errorElement) return;
-
-  errorElement.textContent = message;
-  errorElement.classList.add("show");
-
+  const el = document.getElementById(errorId);
+  if (el) {
+    el.textContent = message || "";
+    el.classList.add("show");
+  }
   if (inputId) {
     const input = document.getElementById(inputId);
     if (input) input.classList.add("error");
@@ -103,17 +20,89 @@ function showError(errorId, message, inputId) {
 }
 
 function clearErrors() {
-  document.querySelectorAll(".error-message").forEach((el) => {
-    el.classList.remove("show");
-    el.textContent = "";
+  document.querySelectorAll(".error-message").forEach((e) => {
+    e.textContent = "";
+    e.classList.remove("show");
   });
-
-  document.querySelectorAll("input.error").forEach((el) => {
-    el.classList.remove("error");
-  });
+  document.querySelectorAll("input.error").forEach((e) => e.classList.remove("error"));
 }
 
 function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
+
+// ---------- main ----------
+document.addEventListener("DOMContentLoaded", () => {
+  const loginForm = document.getElementById("loginForm");
+  if (!loginForm) return;
+
+  // Toggle password visibility
+  document.querySelector(".toggle-password").addEventListener("click", function () {
+    const input = document.getElementById("password");
+    if (!input) return;
+    const isPwd = input.type === "password";
+    input.type = isPwd ? "text" : "password";
+    this.textContent = isPwd ? "🙈" : "👁️";
+  });
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const email = document.getElementById("email")?.value.trim() || "";
+    const password = document.getElementById("password")?.value || "";
+    let ok = true;
+
+    if (!email) {
+      showError("emailError", "Please enter your email", "email");
+      ok = false;
+    } else if (!isValidEmail(email)) {
+      showError("emailError", "Please enter a valid email", "email");
+      ok = false;
+    }
+    if (!password) {
+      showError("passwordError", "Please enter your password", "password");
+      ok = false;
+    }
+
+    if (!ok) {
+      notify("error", "Fix the highlighted fields", "Please correct the form and try again.");
+      return;
+    }
+
+    try {
+      const res = await fetch("login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        notify("error", "Server Error", "Invalid response from server.");
+        return;
+      }
+
+      if (res.ok && data?.success) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        Swal.fire({
+          icon: "success",
+          title: `Welcome back, ${data.user.name}!`,
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          window.location.href = "../homepage/menu.php";
+        });
+      } else {
+        notify("error", "Login Failed", data?.message || "Invalid email or password");
+      }
+    } catch (err) {
+      console.error(err);
+      notify("error", "Unexpected Error", "Please try again later.");
+    }
+  });
+});
