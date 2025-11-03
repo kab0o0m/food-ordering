@@ -114,7 +114,7 @@ if ($status === 'Completed') {
             $mail->Body = "
                 <div style='font-family:Arial,sans-serif; color:#333;'>
                     <h3>Hi ".htmlspecialchars($order['customer_name']).", your order #{$order['id']} is ready for collection</h3>
-                    <p><strong>Date:</strong> ".htmlspecialchars($order['order_date'])."</p>
+                    
                     $table
                     <p style='margin-top:16px;'>Thank you for ordering with <strong>FoodHub</strong>!</p>
                 </div>
