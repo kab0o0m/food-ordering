@@ -1,4 +1,4 @@
-// --- helpers ---
+// ---------- helpers ----------
 
 // Load cart data from localStorage
 function loadCart() {
@@ -21,7 +21,31 @@ function money(val) {
   return "$" + Number(val).toFixed(2);
 }
 
-// --- Render Cart and Totals ---
+// Show notification using SweetAlert2
+function notify(type = "success", title = "", text = "", options = {}) {
+  if (typeof Swal !== "undefined") {
+    Swal.fire(Object.assign({ icon: type, title, text }, options));
+  } else {
+    alert(`${title ? title + ": " : ""}${text || ""}`);
+  }
+}
+
+// Toast-style notification (top-right, auto-dismiss)
+function toastNotify(type = "success", title = "") {
+  if (typeof Swal !== "undefined") {
+    Swal.fire({
+      toast: true,
+      icon: type,
+      title: title,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+  }
+}
+
+// ---------- Render Cart and Totals ----------
 function renderCart() {
   const cartContainer = document.getElementById("cart-items");
   const cart = loadCart();
@@ -29,7 +53,6 @@ function renderCart() {
   if (!cartContainer) return;
   cartContainer.innerHTML = "";
 
-  // If cart is empty, show message
   if (cart.length === 0) {
     cartContainer.innerHTML = `
       <div class="empty-cart">
@@ -40,10 +63,8 @@ function renderCart() {
     return;
   }
 
-  // Build each cart item
   cart.forEach((item, index) => {
     const lineTotal = item.price * item.qty;
-
     const row = document.createElement("div");
     row.className = "cart-item";
 
@@ -53,7 +74,6 @@ function renderCart() {
           <div class="item-name">${item.name}</div>
           <div class="item-line-price">${money(lineTotal)}</div>
         </div>
-
         <div class="item-controls">
           <div class="qty-control">
             <button class="qty-btn dec">−</button>
@@ -70,8 +90,10 @@ function renderCart() {
       const updatedCart = loadCart();
       if (updatedCart[index].qty > 1) {
         updatedCart[index].qty -= 1;
+        toastNotify("info", "Quantity decreased");
       } else {
-        updatedCart.splice(index, 1); // Remove item if quantity is 0
+        updatedCart.splice(index, 1);
+        toastNotify("warning", "Item removed from cart");
       }
       saveCart(updatedCart);
       renderCart();
@@ -82,6 +104,7 @@ function renderCart() {
       const updatedCart = loadCart();
       updatedCart[index].qty += 1;
       saveCart(updatedCart);
+      toastNotify("success", "Quantity increased");
       renderCart();
     });
 
@@ -90,37 +113,28 @@ function renderCart() {
       const updatedCart = loadCart();
       updatedCart.splice(index, 1);
       saveCart(updatedCart);
+      toastNotify("warning", "Item removed from cart");
       renderCart();
     });
 
-    // Add to container
     cartContainer.appendChild(row);
   });
 
-  // Update totals
   updateTotals(cart);
 }
 
-// --- Update Cart Totals ---
+// ---------- Update Cart Totals ----------
 function updateTotals(cart) {
   const originalPriceEl = document.getElementById("original-price");
   const discountEl = document.getElementById("discount-amount");
   const totalEl = document.getElementById("order-total");
   const checkoutItemsText = document.getElementById("checkout-items-text");
 
-  // Calculate subtotal before discount
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-
-  // Placeholder discount logic
   const discount = 0;
-
-  // Total calculation (no delivery fee for now)
   const grandTotal = subtotal - discount;
-
-  // Item count
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
 
-  // Update UI elements
   if (originalPriceEl) originalPriceEl.textContent = money(subtotal);
   if (discountEl) discountEl.textContent = money(discount);
   if (totalEl) totalEl.textContent = money(grandTotal);
@@ -130,7 +144,7 @@ function updateTotals(cart) {
     )}`;
 }
 
-// --- Navbar Account Button Logic ---
+// ---------- Navbar Account Button ----------
 (function initAccountButton() {
   const accountBtn = document.getElementById("accountBtn");
   if (!accountBtn) return;
@@ -142,9 +156,7 @@ function updateTotals(cart) {
     if (rawUser) {
       try {
         const u = JSON.parse(rawUser);
-        if (u && u.name) {
-          username = u.name.split(" ")[0];
-        }
+        if (u && u.name) username = u.name.split(" ")[0];
       } catch (e) {}
     }
     accountBtn.textContent = username;
@@ -159,108 +171,88 @@ function updateTotals(cart) {
   }
 })();
 
-// --- Add More Items Buttons ---
-const addPizzaBtn = document.getElementById("add-pizza-btn");
-if (addPizzaBtn) {
-  addPizzaBtn.addEventListener("click", () => {
-    window.location.href = "../homepage/menu.php";
-  });
-}
-
-const addDrinkBtn = document.getElementById("add-drink-btn");
-if (addDrinkBtn) {
-  addDrinkBtn.addEventListener("click", () => {
-    window.location.href = "../homepage/menu.php#Add-ons";
-  });
-}
-
-// --- Initialize on page load ---
-document.addEventListener("DOMContentLoaded", () => {
-  renderCart();
+// ---------- Add More Items ----------
+document.getElementById("add-pizza-btn")?.addEventListener("click", () => {
+  window.location.href = "../homepage/menu.php";
+});
+document.getElementById("add-drink-btn")?.addEventListener("click", () => {
+  window.location.href = "../homepage/menu.php#Add-ons";
 });
 
-// --- Checkout Button Event Listener ---
-const checkoutBtn = document.getElementById("checkout-btn");
-if (checkoutBtn) {
-  checkoutBtn.addEventListener("click", () => {
-    const cart = loadCart();
+// ---------- Initialize Cart ----------
+document.addEventListener("DOMContentLoaded", renderCart);
 
-    if (!cart.length) {
-      alert("Your cart is empty.");
-      return;
-    }
+// ---------- Checkout ----------
+document.getElementById("checkout-btn")?.addEventListener("click", () => {
+  const cart = loadCart();
 
-    // Must be logged in
-    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (!isLoggedIn) {
-      alert("Please log in before checking out.");
-      window.location.href = "../login/login.html";
-      return;
-    }
+  if (!cart.length) {
+    notify("error", "Empty Cart", "Your cart is empty.");
+    return;
+  }
 
-    // Get user info from localStorage
-    let userData = {};
-    try {
-      userData = JSON.parse(localStorage.getItem("user") || "{}");
-    } catch (e) {
-      userData = {};
-    }
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  if (!isLoggedIn) {
+    notify("error", "Login Required", "Please log in before checking out.");
+    window.location.href = "../login/login.html";
+    return;
+  }
 
-    if (!userData.email || !userData.name || !userData.phone) {
-      alert("Your profile is incomplete. Please update your profile before ordering.");
-      window.location.href = "../account/editprofile.html";
-      return;
-    }
+  let userData = {};
+  try {
+    userData = JSON.parse(localStorage.getItem("user") || "{}");
+  } catch (e) {}
 
-    // Calculate totals
-    const totals = calcTotalsForPayload(cart);
+  if (!userData.email || !userData.name || !userData.phone) {
+    notify("error", "Profile Incomplete", "Please update your profile before ordering.");
+    window.location.href = "../account/editprofile.html";
+    return;
+  }
 
-    // Prepare the payload to send to the backend
-    const payload = {
-      name: userData.name,
-      phone: userData.phone,
-      email: userData.email,
-      cart: cart,
-      total: totals.total,
-    };
+  const totals = calcTotalsForPayload(cart);
+  const payload = {
+    name: userData.name,
+    phone: userData.phone,
+    email: userData.email,
+    cart: cart,
+    total: totals.total,
+  };
 
-    console.log("Payload to send:", payload); // Log the payload for debugging
+  fetch("../checkout/checkout.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.success) {
+        notify("error", "Checkout Failed", data.message || "Try again.");
+        return;
+      }
 
-    // Send the data to checkout.php
-    fetch("../checkout/checkout.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Response from server:", data); // Log the response for debugging
+      localStorage.setItem("lastOrderId", data.order_id);
+      localStorage.removeItem("cart");
 
-        if (!data.success) {
-          alert("Checkout failed: " + data.message);
-          return;
-        }
-
-        // Store the last order id for later reference (thank you / my orders page)
-        localStorage.setItem("lastOrderId", data.order_id);
-
-        // Clear the cart
-        localStorage.removeItem("cart");
-
-        // Redirect to "my orders" page
+      Swal.fire({
+        icon: "success",
+        title: "Order Placed!",
+        text: "Redirecting to My Orders…",
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
         window.location.href = "../checkout/checkout.html";
-      })
-      .catch((err) => {
-        console.error("Checkout Error:", err);
-        alert("Unexpected error during checkout.");
       });
-  });
-}
+    })
+    .catch((err) => {
+      console.error("Checkout Error:", err);
+      notify("error", "Unexpected Error", "Please try again later.");
+    });
+});
 
-// --- Calculate totals for payload ---
+// ---------- Calculate totals for payload ----------
 function calcTotalsForPayload(cart) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-  const discount = 0; // placeholder
+  const discount = 0;
   const total = subtotal - discount;
   return { subtotal, discount, total };
 }

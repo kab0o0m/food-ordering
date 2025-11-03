@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodHub - Your Cart</title>
     <link rel="stylesheet" href="../style.css" />
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
   </head>
 
   <body>
@@ -14,9 +18,9 @@
       <ul class="nav-links">
         <li><a href="../homepage/menu.php">HOME</a></li>
         <li><a href="../checkout/checkout.html">MY ORDERS</a></li>
-        <li><a href="cart.html">CART</a></li>
+        <li>CART</li>
       </ul>
-      <button class="account-btn" id="accountBtn">MY ACCOUNT</button>
+      <button class="account-btn" id="accountBtn">LOGIN</button>
     </nav>
 
     <!-- Cart Content -->
@@ -29,8 +33,12 @@
             <button class="collapse-btn">∨</button>
           </div>
           <div class="voucher-input-group">
-            <input type="text" placeholder="Enter Voucher Code" class="voucher-input" />
-            <button class="apply-btn">Apply</button>
+            <input
+              type="text"
+              placeholder="Enter Voucher Code"
+              class="voucher-input"
+              id="voucher-code" />
+            <button class="apply-btn" id="apply-voucher-btn">Apply</button>
           </div>
         </div>
 
@@ -41,7 +49,7 @@
             <button class="collapse-btn">∨</button>
           </div>
 
-          <!-- (Optional promo bundle UI - you can keep/remove) -->
+          <!-- Optional promo bundle UI -->
           <div class="deal-card" id="deal-card" style="display: none">
             <div class="deal-info">
               <div class="deal-title" id="deal-title">Voucher</div>
@@ -53,7 +61,7 @@
 
           <!-- Cart Items (dynamic) -->
           <div class="cart-items" id="cart-items">
-            <!-- JS will inject items here -->
+            <!-- JS injects cart items here -->
           </div>
         </div>
 
@@ -81,6 +89,63 @@
       </div>
     </div>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Cart JS -->
     <script src="cart.js"></script>
+
+    <script>
+      // Optional: Voucher Apply Button Logic
+      document.getElementById("apply-voucher-btn")?.addEventListener("click", () => {
+        const code = document.getElementById("voucher-code")?.value.trim();
+        if (!code) {
+          Swal.fire({ icon: "error", title: "Empty Code", text: "Please enter a voucher code." });
+          return;
+        }
+
+        // Example: simple fixed discount for demonstration
+        const discountAmount = 5; // $5 off
+        document.getElementById("deal-card").style.display = "flex";
+        document.getElementById("deal-price").textContent = `$${discountAmount.toFixed(2)}`;
+        document.getElementById("deal-desc").textContent = `Voucher "${code}" applied`;
+
+        // Update discount in totals
+        const cart = loadCart();
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+        document.getElementById("discount-amount").textContent = `$${discountAmount.toFixed(2)}`;
+        document.getElementById("order-total").textContent = `$${(
+          subtotal - discountAmount
+        ).toFixed(2)}`;
+
+        Swal.fire({
+          icon: "success",
+          title: "Voucher Applied",
+          text: `Discount of $${discountAmount.toFixed(2)} applied!`,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      });
+
+      document.getElementById("deal-remove-btn")?.addEventListener("click", () => {
+        document.getElementById("deal-card").style.display = "none";
+        document.getElementById("discount-amount").textContent = "$0.00";
+
+        // Recalculate total
+        const cart = loadCart();
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+        document.getElementById("order-total").textContent = `$${subtotal.toFixed(2)}`;
+
+        Swal.fire({
+          icon: "info",
+          title: "Voucher Removed",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      });
+    </script>
   </body>
 </html>
