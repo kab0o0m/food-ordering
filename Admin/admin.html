@@ -268,15 +268,6 @@
             <button class="tab" data-filter="Completed">Completed</button>
           </div>
         </div>
-
-        <div class="search-wrap">
-          <input
-            id="search"
-            class="search"
-            type="search"
-            placeholder="Search by Order # / Email / Name" />
-          <button class="refresh-btn" id="refreshBtn">Refresh</button>
-        </div>
       </div>
 
       <div id="orders-list"></div>
@@ -483,19 +474,12 @@
           });
       }
 
-      document
-        .getElementById("refreshBtn")
-        .addEventListener("click", () => fetchOrders().catch(() => {}));
       document.querySelectorAll(".tab").forEach((t) => {
         t.addEventListener("click", () => {
           CURRENT_FILTER = t.dataset.filter;
           setActiveTab(CURRENT_FILTER);
           render();
         });
-      });
-      document.getElementById("search").addEventListener("input", (e) => {
-        CURRENT_QUERY = e.target.value.trim();
-        render();
       });
 
       fetchOrders().catch((err) => {
