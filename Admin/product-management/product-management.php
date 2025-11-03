@@ -258,11 +258,11 @@ mysqli_close($conn);
     <nav class="navbar">
         <div class="logo">FoodHub Admin</div>
         <ul class="nav-links">
-            <li><a href="../homepage/menu.php">HOME</a></li>
+            <li><a href="../admin.html">HOME</a></li>
             <li><a href="../sales-report/sales-report.html">SALES REPORT</a></li>
             <li><a href="/">PRODUCTS</a></li>
         </ul>
-        <button class="account-btn" onclick="window.location.href='../homepage/menu.php'">EXIT ADMIN</button>
+        <button class="account-btn" onclick="window.location.href='../../User/homepage/menu.php'">EXIT ADMIN</button>
     </nav>
 
     <div class="management-container">
@@ -272,7 +272,7 @@ mysqli_close($conn);
                 <h1>🍕 Product Management</h1>
                 <p>Manage your menu items</p>
             </div>
-            <button class="add-product-btn" onclick="openAddModal()">+ Add New Product</button>
+            <!-- <button class="add-product-btn" onclick="openAddModal()">+ Add New Product</button> -->
         </div>
 
         <!-- Products Table -->
