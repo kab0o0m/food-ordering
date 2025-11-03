@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodHub - Edit Profile</title>
     <link rel="stylesheet" href="../style.css" />
+
+    <!-- SweetAlert2 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
   </head>
 
   <body>
@@ -91,6 +96,9 @@
       </div>
     </div>
 
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
       // ------------------- VALIDATION HELPERS -------------------
       function showError(errorId, message, inputId) {
@@ -109,7 +117,6 @@
       }
 
       function isValidPhone(phone) {
-        // fixed regex (no double escaping)
         const phoneRegex = /^[\d\s\+\-\(\)]+$/;
         return phoneRegex.test(phone) && phone.replace(/\D/g, "").length >= 8;
       }
@@ -117,7 +124,6 @@
       // ------------------- AUTH CHECK -------------------
       let currentUser = null;
       if (localStorage.getItem("isLoggedIn") !== "true") {
-        // user not logged in -> send to login
         window.location.href = "../login/login.html";
       }
 
@@ -132,13 +138,16 @@
       }
 
       // ------------------- FETCH PROFILE FROM SERVER -------------------
-      // pulls latest user info (name, phone) from DB using their email
       fetch("editprofile.php?email=" + encodeURIComponent(currentUser.email))
         .then((res) => res.json())
         .then((data) => {
           if (!data.success) {
-            alert("Unable to load profile: " + data.message);
-            window.location.href = "../login/login.html";
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Unable to load profile: " + data.message,
+            });
+            setTimeout(() => (window.location.href = "../login/login.html"), 2000);
             return;
           }
 
@@ -146,12 +155,12 @@
           document.getElementById("email").value = data.user.email || "";
           document.getElementById("phone").value = data.user.phone || "";
 
-          currentUser = data.user; // keep synced
+          currentUser = data.user;
         })
         .catch((err) => {
           console.error(err);
-          alert("Error loading profile.");
-          window.location.href = "../login/login.html";
+          Swal.fire({ icon: "error", title: "Error", text: "Error loading profile." });
+          setTimeout(() => (window.location.href = "../login/login.html"), 2000);
         });
 
       // ------------------- PASSWORD TOGGLE -------------------
@@ -181,20 +190,16 @@
 
         let valid = true;
 
-        // name validation
         if (name.length < 2) {
           showError("nameError", "Name must be at least 2 characters", "name");
           valid = false;
         }
 
-        // phone validation
         if (!isValidPhone(phone)) {
           showError("phoneError", "Enter a valid phone number", "phone");
           valid = false;
         }
 
-        // password validation (OPTIONAL)
-        // only check password rules if the user typed something
         const wantsPasswordChange = password !== "" || confirmPassword !== "";
 
         if (wantsPasswordChange) {
@@ -210,17 +215,8 @@
 
         if (!valid) return;
 
-        // build payload for backend
-        const payload = {
-          email,
-          name,
-          phone,
-        };
-
-        // only send password if user is changing it
-        if (wantsPasswordChange) {
-          payload.password = password;
-        }
+        const payload = { email, name, phone };
+        if (wantsPasswordChange) payload.password = password;
 
         fetch("../editprofile/editprofile.php", {
           method: "POST",
@@ -230,31 +226,33 @@
           .then((res) => res.json())
           .then((data) => {
             if (!data.success) {
-              alert("Update failed: " + data.message);
+              Swal.fire({ icon: "error", title: "Update Failed", text: data.message });
               return;
             }
 
-            // sync localStorage with new info
-            const updatedUser = {
-              ...currentUser,
-              name: data.user.name,
-              phone: data.user.phone,
-            };
-
-            if (wantsPasswordChange) {
-              // this is only for client-side convenience.
-              // (DB is storing the hashed password, not this)
-              updatedUser.password = password;
-            }
-
+            const updatedUser = { ...currentUser, name: data.user.name, phone: data.user.phone };
+            if (wantsPasswordChange) updatedUser.password = password;
             localStorage.setItem("user", JSON.stringify(updatedUser));
 
-            alert("Profile updated successfully!");
-            window.location.href = "../homepage/menu.php";
+            Swal.fire({
+              icon: "success",
+              title: "Profile Updated",
+              text: "Your profile has been updated successfully!",
+              toast: true,
+              position: "top-end",
+              showConfirmButton: false,
+              timer: 2000,
+            });
+
+            setTimeout(() => (window.location.href = "../homepage/menu.php"), 2000);
           })
           .catch((err) => {
             console.error(err);
-            alert("Unexpected error updating profile.");
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Unexpected error updating profile.",
+            });
           });
       });
     </script>
