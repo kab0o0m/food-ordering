@@ -5,68 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FoodHub - Sales Report</title>
     <link rel="stylesheet" href="../../User/style.css" />
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background: #f9f9f9;
-        margin: 0;
-      }
-      .report-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-      }
-      .report-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-      }
-      .report-header h1 {
-        margin: 0;
-      }
-      .stat-grid {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-      }
-      .stat-card {
-        flex: 1;
-        min-width: 200px;
-        background: white;
-        padding: 1rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        margin-top: 2rem;
-      }
-      th,
-      td {
-        padding: 1rem;
-        border-bottom: 1px solid #eee;
-        text-align: left;
-      }
-      th {
-        background: #f2f2f2;
-      }
-    </style>
   </head>
   <body>
     <nav class="navbar">
       <div class="logo">FoodHub Admin</div>
       <ul class="nav-links">
-        <li><a href="../admin.html">HOME</a></li>
-        <li><a href="/">SALES REPORT</a></li>
-        <li><a href="../product-management/product-management.php">PRODUCTS</a></li>
+        <li><a href="../admin.html">Admin</a></li>
+        <li><a href="../sales-report/sales-report.html">Sales Report</a></li>
+        <li><a href="../product-management/product-management.php">Products</a></li>
       </ul>
-      <button class="account-btn" onclick="window.location.href='../homepage/menu.php'">
+      <button
+        id="exitBtn"
+        class="account-btn"
+        onclick="window.location.href='../User/homepage/menu.php'">
         EXIT ADMIN
       </button>
     </nav>

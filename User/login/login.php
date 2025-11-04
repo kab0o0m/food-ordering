@@ -53,7 +53,7 @@ if ($email === '' || $pwdPlain === '') {
 
 // Find user by email
 $emailEsc = mysqli_real_escape_string($conn, $email);
-$sql = "SELECT user_id, name, email, password_hash, phone 
+$sql = "SELECT user_id, name, email, password_hash, phone, role 
         FROM Users 
         WHERE email='$emailEsc'
         LIMIT 1";
@@ -87,7 +87,8 @@ echo json_encode([
         "user_id" => $userRow['user_id'],
         "name"    => $userRow['name'],
         "email"   => $userRow['email'],
-        "phone"   => $userRow['phone']
+        "phone"   => $userRow['phone'],
+        "role"    => $userRow['role'],
     ]
 ]);
 exit;

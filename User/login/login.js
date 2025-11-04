@@ -95,7 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
-          window.location.href = "../homepage/menu.php";
+          console.log(data.user.role);
+          if (data.user.role === "admin") {
+            window.location.href = "../../Admin/admin.html";
+          } else {
+            window.location.href = "../homepage/menu.php";
+          }
         });
       } else {
         notify("error", "Login Failed", data?.message || "Invalid email or password");
