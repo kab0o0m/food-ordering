@@ -66,7 +66,7 @@ foreach ($cart as $item) {
     $quantity     = intval($item['qty']);
     $line_total   = $unit_price * $quantity;
 
-    $item_stmt->bind_param("iisddi", $order_id, $product_id, $product_name, $unit_price, $quantity, $line_total);
+    $item_stmt->bind_param("iisddd", $order_id, $product_id, $product_name, $unit_price, $quantity, $line_total);
     if (!$item_stmt->execute()) {
         echo json_encode(["success" => false, "message" => "Failed to insert item into order items"]);
         exit;
