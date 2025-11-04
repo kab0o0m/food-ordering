@@ -39,7 +39,7 @@ mysqli_close($conn);
       <button
         id="exitBtn"
         class="account-btn"
-        onclick="window.location.href='../User/homepage/menu.php'">
+        onclick="window.location.href='../../User/homepage/menu.php'">
         EXIT ADMIN
       </button>
     </nav>

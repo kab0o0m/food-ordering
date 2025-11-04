@@ -2159,10 +2159,9 @@
         display: flex;
         gap: 8px;
       }
-      .mark-btn {
+      .mark-btn {   
         border: 0;
-        background: var(--green);
-        color: #fff;
+        background-color: #9cecd5;
         padding: 10px 12px;
         border-radius: 10px;
         cursor: pointer;
