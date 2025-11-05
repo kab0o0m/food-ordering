@@ -173,62 +173,36 @@
         render();
       }
 
-      async function updateStatus(orderId, status, btnRef) {
+      function updateStatus(orderId, status, btnRef) {
         if (!orderId) return;
         btnRef.disabled = true;
         btnRef.textContent = "Updating…";
 
-        try {
-          const res = await fetch("admin.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ order_id: orderId, status }),
+        fetch("update_order_status.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ order_id: orderId, status }),
+        })
+          .then((r) => r.json())
+          .then((d) => {
+            if (!d.success) {
+              alert(d.message || "Failed to update order status");
+              btnRef.disabled = false;
+              btnRef.textContent = "Ready For Collection";
+              return;
+            }
+            // Optimistic update
+            const idx = ALL_ORDERS.findIndex((o) => o.id == orderId);
+            if (idx > -1) ALL_ORDERS[idx].order_status = "Completed";
+            render();
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Unexpected error.");
+            btnRef.disabled = false;
+            btnRef.textContent = "Ready For Collection";
           });
-
-          if (res.status === 401) {
-            await Swal.fire({
-              icon: "warning",
-              title: "Login required",
-              text: "Please log in to continue.",
-            });
-            location.href = "../login/login.html";
-            return;
-          }
-          if (res.status === 403) {
-            await Swal.fire({ icon: "error", title: "Access denied", text: "Admin only area." });
-            location.href = "../User/homepage/menu.php";
-            return;
-          }
-
-          const data = await res.json().catch(() => ({}));
-          if (!data.success) {
-            throw new Error(data.message || "Update failed");
-          }
-
-          // update local model
-          const idx = ALL_ORDERS.findIndex((o) => o.id == orderId);
-          if (idx > -1) ALL_ORDERS[idx].order_status = "Completed";
-
-          Swal.fire({
-            icon: "success",
-            title: "Updated",
-            text: `Order #${orderId} marked as Completed`,
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 2000,
-          });
-
-          render();
-        } catch (err) {
-          console.error(err);
-          Swal.fire({ icon: "error", title: "Error", text: err.message || "Unexpected error." });
-          btnRef.disabled = false;
-          btnRef.textContent = "Ready for Collection";
-        }
       }
-
       // ---------- events ----------
       document.querySelectorAll(".tab").forEach((t) => {
         t.addEventListener("click", () => {
